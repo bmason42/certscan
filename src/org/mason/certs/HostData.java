@@ -1,4 +1,4 @@
-package com.mason.certs;
+package org.mason.certs;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 

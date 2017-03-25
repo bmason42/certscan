@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/certapi/certapi.iml" filepath="$PROJECT_DIR$/certapi/certapi.iml" />
       <module fileurl="file://$PROJECT_DIR$/certplay.iml" filepath="$PROJECT_DIR$/certplay.iml" />
     </modules>
   </component>

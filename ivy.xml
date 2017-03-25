@@ -1,0 +1,23 @@
+<ivy-module version="2.0">
+    <info organisation="com.mason" module="certscan"/>
+
+    <configurations>
+        <conf name="webapp" description="Files needed for the web app"/>
+        <conf name="main" description="Files needed for the main app"/>
+        <conf name="test" description="test files"/>
+        <conf name="source" description="source for all"/>
+    </configurations>
+
+    <dependencies>
+        <dependency org="com.amazonaws" name="aws-java-sdk" rev="1.11.98" conf="main->default;source->sources"/>
+        <dependency org="com.fasterxml.jackson.jaxrs" name="jackson-jaxrs-json-provider" rev="2.8.+" conf="main->default;source->sources"/>
+        <dependency org="com.fasterxml.jackson.jaxrs" name="jackson-jaxrs-json-provider" rev="2.8.+" conf="webapp->default;source->sources"/>
+        <dependency org="io.swagger" name="swagger-jersey2-jaxrs" rev="1.5.13" conf="webapp->default;source->sources"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="webapp->default;source->sources"/>
+        <dependency org="org.glassfish.jersey.containers" name="jersey-container-servlet" rev="2.25.+"
+                    conf="webapp->default;source->sources"/>
+        <dependency org="org.testng" name="testng" rev="6.8.21" conf="test->default"/>
+        <dependency org="com.datastax.cassandra" name="cassandra-driver-core" rev="3.1.4" conf="main->default"/>
+
+    </dependencies>
+</ivy-module>

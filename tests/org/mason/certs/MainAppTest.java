@@ -1,20 +1,22 @@
-package com.mason.certs;
+package org.mason.certs;
 
-import org.junit.Assert;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.net.InetAddress;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by masonb on 2/14/2017.
  */
 public class MainAppTest {
-    @org.junit.Before
+    @BeforeMethod
     public void setUp() throws Exception {
     }
 
-    @org.junit.Test
+    @Test
     public void probeIp() throws Exception {
         MainApp x=new MainApp();
         InetAddress addr=InetAddress.getByName("216.58.193.78");

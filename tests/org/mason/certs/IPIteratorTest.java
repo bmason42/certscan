@@ -1,8 +1,8 @@
-package com.mason.certs;
+package org.mason.certs;
 
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import org.testng.annotations.Test;
+
 
 /**
  * Created by masonb on 2/20/2017.

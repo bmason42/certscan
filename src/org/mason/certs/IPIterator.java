@@ -1,4 +1,4 @@
-package com.mason.certs;
+package org.mason.certs;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

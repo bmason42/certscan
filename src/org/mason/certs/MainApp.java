@@ -1,7 +1,6 @@
-package com.mason.certs;
+package org.mason.certs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.javaws.Main;
 
 import javax.net.ssl.*;
 import javax.xml.bind.DatatypeConverter;
@@ -10,9 +9,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.security.Principal;
-import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;

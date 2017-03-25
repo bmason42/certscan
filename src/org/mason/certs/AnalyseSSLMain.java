@@ -1,4 +1,4 @@
-package com.mason.certs;
+package org.mason.certs;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
@@ -11,7 +11,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

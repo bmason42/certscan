@@ -1,4 +1,4 @@
-package com.mason.certs;
+package org.mason.certs;
 
 import com.datastax.driver.core.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
