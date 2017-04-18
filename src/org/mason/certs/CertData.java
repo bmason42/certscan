@@ -1,6 +1,9 @@
 package org.mason.certs;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +12,7 @@ import java.util.List;
 /**
  * Created by masonb on 2/14/2017.
  */
-@DynamoDBDocument
+@DynamoDBTable(tableName="CertData")
 public class CertData {
     private String certType;
     private String pubKey;
@@ -24,6 +27,8 @@ public class CertData {
     public void addSAN(SubjectAlt a){
         sans.add(a);
     }
+
+    @DynamoDBAttribute(attributeName = "certType")
     public String getCertType() {
         return certType;
     }
@@ -32,6 +37,7 @@ public class CertData {
         this.certType = certType;
     }
 
+    @DynamoDBAttribute(attributeName = "pubkey")
     public String getPubKey() {
         return pubKey;
     }
@@ -40,6 +46,7 @@ public class CertData {
         this.pubKey = pubKey;
     }
 
+    @DynamoDBAttribute(attributeName = "start")
     public Date getStart() {
         return start;
     }
@@ -48,6 +55,7 @@ public class CertData {
         this.start = start;
     }
 
+    @DynamoDBAttribute(attributeName = "end")
     public Date getEnd() {
         return end;
     }
@@ -56,6 +64,7 @@ public class CertData {
         this.end = end;
     }
 
+    @DynamoDBHashKey(attributeName = "dn")
     public String getDn() {
         return dn;
     }
@@ -64,6 +73,7 @@ public class CertData {
         this.dn = dn;
     }
 
+    @DynamoDBAttribute(attributeName = "sans")
     public List<SubjectAlt> getSans() {
         return sans;
     }
@@ -72,6 +82,7 @@ public class CertData {
         this.sans = sans;
     }
 
+    @DynamoDBAttribute(attributeName = "issuerDN")
     public String getIssureDN() {
         return issureDN;
     }
@@ -80,6 +91,7 @@ public class CertData {
         this.issureDN = issureDN;
     }
 
+    @DynamoDBAttribute(attributeName = "serialNum")
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }

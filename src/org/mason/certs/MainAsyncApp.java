@@ -13,28 +13,32 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.net.ssl.*;
 import javax.xml.bind.DatatypeConverter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 import java.security.Principal;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.time.Year;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by masonb on 2/14/2017.
  */
-public class MainApp {
+public class MainAsyncApp {
 
     final ObjectMapper mapper = new ObjectMapper();
-    final BlockingQueue<InetAddress> ipsToScan;
+    final BlockingQueue<InetSocketAddress> connectableAddresses;
     final BlockingQueue<HostData> hostRecordsToWrite;
     final AtomicBoolean doneWithIPs = new AtomicBoolean(false);
     ThreadGroup workerThreads;
@@ -44,19 +48,27 @@ public class MainApp {
     public static final String TESTURL = "https://google.com";
     AmazonDynamoDB client ;
     DynamoDBMapper dbMapper;
-    int connectionTime;
+    int conTimeOut;
+    final Selector selector;
+    final int maxSelSize;
     public static void main(String[] args) {
-        MainApp x = new MainApp();
-        String start="0.0.0.0";
-        String end="1.255.255.255";
-        if (args.length ==2){
-            start=args[0];
-            end=args[1];
+        MainAsyncApp x = null;
+        try {
+            x = new MainAsyncApp();
+            String start="1.0.0.0";
+            String end="10.255.255.255";
+            if (args.length ==2){
+                start=args[0];
+                end=args[1];
+            }
+            x.doScan(start,end);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        x.doScan(start,end);
+
     }
 
-    public MainApp() {
+    public MainAsyncApp() throws IOException {
         final BasicAWSCredentials credentials=new BasicAWSCredentials("AKIAILGX5DKFUTBXFVQA","QEB5EeNIXWO/Ovf39wAqPRUCWgOqmL6u0nLI9d2X");
         AWSCredentialsProvider provider=new AWSCredentialsProvider(){
             @Override
@@ -69,15 +81,17 @@ public class MainApp {
 
             }
         };
+        selector=Selector.open();
         ProfileCredentialsProvider loadedProvider = new ProfileCredentialsProvider("personal");
         AmazonDynamoDBClientBuilder builder = AmazonDynamoDBClientBuilder.standard().withCredentials(provider).withRegion(Regions.US_WEST_2);
         client= builder.build();
         dbMapper = new DynamoDBMapper(client);
-        connectionTime=Integer.parseInt(System.getProperty("con.timeout","3"));
-        workerThreadCount=Integer.parseInt(System.getProperty("worker.count","2000"));
+        conTimeOut =Integer.parseInt(System.getProperty("con.timeout","5"));
+        workerThreadCount=Integer.parseInt(System.getProperty("worker.count","200"));
         writerThreadCount=Integer.parseInt(System.getProperty("writer.count","3"));
-        int queueSize=Integer.parseInt(System.getProperty("queue.size","200"));
-        ipsToScan= new LinkedBlockingQueue<>(queueSize);
+        maxSelSize=Integer.parseInt(System.getProperty("sel.size","10000"));
+        int queueSize=Integer.parseInt(System.getProperty("queue.size","500"));
+        connectableAddresses=new LinkedBlockingQueue<>(queueSize);
         hostRecordsToWrite= new LinkedBlockingQueue<>(queueSize);
         latch=new CountDownLatch(workerThreadCount+writerThreadCount);
         disableSslChecks();
@@ -86,16 +100,16 @@ public class MainApp {
     public static void disableSslChecks() {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
 
             public void checkClientTrusted(
-                    java.security.cert.X509Certificate[] certs, String authType) {
+                    X509Certificate[] certs, String authType) {
             }
 
             public void checkServerTrusted(
-                    java.security.cert.X509Certificate[] certs, String authType) {
+                    X509Certificate[] certs, String authType) {
             }
         }};
 
@@ -120,24 +134,12 @@ public class MainApp {
 
     private void processor() {
         try {
-            InetAddress addr = this.ipsToScan.poll(10, TimeUnit.SECONDS);
+            InetSocketAddress addr = this.connectableAddresses.poll(10, TimeUnit.SECONDS);
             while (!doneWithIPs.get() || (addr != null)) {
                 if (addr != null) {
                     try {
-                        HostData hostData;
-                        hostData= probeIp(addr,80,false);
-                        if (hostData != null) {
-                            hostRecordsToWrite.put(hostData);
-                        }
-                        hostData= probeIp(addr,8080,false);
-                        if (hostData != null) {
-                            hostRecordsToWrite.put(hostData);
-                        }
-                        hostData= probeIp(addr,443,true);
-                        if (hostData != null) {
-                            hostRecordsToWrite.put(hostData);
-                        }
-                        hostData = probeIp(addr,8443,true);
+                        HostData hostData=null;
+                        hostData= probeIp(addr);
                         if (hostData != null) {
                             hostRecordsToWrite.put(hostData);
                         }
@@ -145,8 +147,7 @@ public class MainApp {
                         //ignore these
                     }
                 }
-                addr = this.ipsToScan.poll(10, TimeUnit.SECONDS);
-
+                addr = this.connectableAddresses.poll(10, TimeUnit.SECONDS);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -154,30 +155,32 @@ public class MainApp {
     }
 
 
-    HostData probeIp(InetAddress addr,int port,boolean ssl)  {
+    HostData probeIp(InetSocketAddress addr)  {
         HostData hostData = null;
-        if (addr.isAnyLocalAddress()){
+        if (addr.getAddress().isAnyLocalAddress()){
             return null;
         }
 
         String urlString;
+        int port = addr.getPort();
+        boolean ssl=(port == 443) || (port ==8443);
         if (ssl){
-            urlString="https://" + addr.getHostAddress() + ":" + port;
+            urlString="https://" + addr.getAddress().getHostAddress() + ":" + port;
         } else{
-            urlString="http://" + addr.getHostAddress() + ":" + port;
+            urlString="http://" + addr.getAddress().getHostAddress() + ":" + port;
         }
         try {
             String msg = "Trying: " + urlString;
             log(msg);
             URL url = new URL(urlString);
             URLConnection urlConnection = url.openConnection();
-            urlConnection.setConnectTimeout(connectionTime*1000);
+            urlConnection.setConnectTimeout(conTimeOut *1000);
             urlConnection.setDoOutput(false);
             urlConnection.setDoInput(true);
             urlConnection.connect();
             hostData = new HostData();
             hostData.setPort( port);
-            hostData.setIp(addr.getHostAddress());
+            hostData.setIp(addr.getAddress().getHostAddress());
             hostData.setName( addr.getHostName());
             Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
             for (Map.Entry<String, List<String>> x : headerFields.entrySet()) {
@@ -252,9 +255,19 @@ public class MainApp {
                         long l=counter.incrementAndGet();
                         if ( (l%1000)==0){
                             System.out.println(l + " - " + addr );
-                            System.out.println(ipsToScan.size() + " : " + hostRecordsToWrite.size());
+                            System.out.println("Channels: " + selector.keys().size() + " : Connectable Queue: " + connectableAddresses.size() + "  Write Queue:" + hostRecordsToWrite.size());
                         }
-                        ipsToScan.put(addr);
+                        while (selector.keys().size() >maxSelSize){
+                            Thread.sleep(1000);
+                        }
+                        if (!addr.isAnyLocalAddress()) {
+                            createTestChannel(addr, 80);
+                            createTestChannel(addr, 443);
+                            createTestChannel(addr, 8080);
+                            createTestChannel(addr, 8443);
+                        }
+
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -274,7 +287,37 @@ public class MainApp {
         System.out.println("Done");
     }
 
+    public void createTestChannel(InetAddress addr, int port) {
+        try {
+            SocketChannel ch;
+            InetSocketAddress sockAddr;
+            sockAddr=new InetSocketAddress(addr,port);
+            ch=SocketChannel.open();
+            ch.configureBlocking(false);
+            synchronized (selector) {
+                ch.register(selector, SelectionKey.OP_CONNECT);
+            }
+            ch.connect(sockAddr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void initThreads() {
+        Runnable selRun=new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    selectThread();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Thread selThread=new Thread(workerThreads,selRun,"Select Thread");
+        selThread.start();
+
         workerThreads = new ThreadGroup("scanner threads");
         for (int i = 0; i < workerThreadCount; i++) {
             Runnable run = new Runnable() {
@@ -301,53 +344,6 @@ public class MainApp {
         }
     }
 
-    private static boolean checkPrivate(int a, int b, int c, int d) {
-        if (a == 169) {
-            return true;
-        }
-        if (a == 10) {
-            return true;
-        }
-        if ((a == 192) && (b == 168)) {
-            return true;
-        }
-        if ((a == 172) && ((b >= 16) && (b <= 31))) {
-            return true;
-        }
-        return false;
-    }
-
-    private void writterFunc() {
-        try (FileOutputStream fout = new FileOutputStream("certdata.json");
-             PrintStream out = new PrintStream(fout)) {
-            out.println("[");
-            HostData data = hostRecordsToWrite.poll(2, TimeUnit.MINUTES);
-            int n=0;
-            boolean first=true;
-            while (!this.doneWithIPs.get() || (data != null)) {
-                if (data != null) {
-                    String json = mapper.writeValueAsString(data);
-                    if (first){
-                        first=false;
-                    }else{
-                        //print the comma for the previous line
-                        out.println(",");
-                    }
-                    out.print(json);
-                    if (++n >100){
-                        out.flush();
-                        n=0;
-                    }
-                }
-                data = hostRecordsToWrite.poll(2, TimeUnit.MINUTES);
-            }
-            out.println();
-            out.println("]");
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     private void dbWritterFunc() {
         try {
             HostData data = hostRecordsToWrite.poll(2, TimeUnit.MINUTES);
@@ -373,8 +369,45 @@ public class MainApp {
         }
     }
 
-    public void testConnect() throws Exception{
-
-
+    public void selectThread() throws Exception{
+        while (!Thread.currentThread().isInterrupted()){
+            Thread.sleep(100);
+            List<SelectionKey> keyList;
+            synchronized (selector) {
+                int available = selector.selectNow();
+                keyList=new ArrayList<>(selector.keys());
+            }
+            Iterator<SelectionKey> keys=keyList.iterator();
+            while (keys.hasNext()) {
+                SelectionKey key = keys.next();
+                if (key.isValid()) {
+                    if (key.isConnectable()) {
+                        SocketChannel socketChannel = (SocketChannel) key.channel();
+                        try {
+                            socketChannel.finishConnect();
+                            InetSocketAddress addr = (InetSocketAddress) socketChannel.getRemoteAddress();
+                            connectableAddresses.put(addr);
+                        }catch (Exception e){
+                            log(e.getMessage());
+                        }
+                        socketChannel.close();
+                        key.cancel();
+                    }
+                }
+                Object attachment = key.attachment();
+                if (attachment == null){
+                    key.attach(new Long(System.currentTimeMillis()));
+                }else {
+                    Long ts = (Long) attachment;
+                    long diff = System.currentTimeMillis() - ts;
+                    if (diff > (conTimeOut * 1000)) {
+                        key.channel().close();
+                        key.cancel();
+                    }
+                }
+            }
+        }
     }
+
+
 }

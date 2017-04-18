@@ -1,0 +1,333 @@
+[
+  {
+    "ssl": true,
+    "ip": "216.58.193.78",
+    "port": 443,
+    "cipherSuite": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    "certData": [
+      {
+        "certType": "X.509",
+        "pubKey": "30820122300D06092A864886F70D01010105000382010F003082010A0282010100C0BA01CE874B742DA7F9F6B383BF65E4FFE8C37E993831C41A5F0CECDEDFDC59EF7C9773A94A21F60F811CC9C95E1DFDA6422A77C40C84160CE0EB6F5EA69E44EB9FBFADABC85F1169C6254E970862523300FCFA3028450A9B979568D3B618B4635CF05B9A293FB88D81F12BC8C0351B3A1F6D71A31B45756501094F3ED40F4300A8A73B083E75DDE92BF509197ACD2E106CB757C18BC8A1429BF34D119726AAC0FBF36E075DBBEAE2B18239D3B8C54E79C757D7A7FE3C0D243A0D3A39DE179F35D2E58A8723C34ECE612C079FAB4F1A96E20DF44869536A5AD9EB3D0651A1861B005B8F35433502A6EE2D8C82D34B1BDADD5B6BCF2803862ACFE1C2D29643B30203010001",
+        "start": 1490797454000,
+        "end": 1498051860000,
+        "dn": "CN=*.google.com, O=Google Inc, L=Mountain View, ST=California, C=US",
+        "sans": [
+          {
+            "type": 2,
+            "value": "*.google.com"
+          },
+          {
+            "type": 2,
+            "value": "*.android.com"
+          },
+          {
+            "type": 2,
+            "value": "*.appengine.google.com"
+          },
+          {
+            "type": 2,
+            "value": "*.cloud.google.com"
+          },
+          {
+            "type": 2,
+            "value": "*.gcp.gvt2.com"
+          },
+          {
+            "type": 2,
+            "value": "*.google-analytics.com"
+          },
+          {
+            "type": 2,
+            "value": "*.google.ca"
+          },
+          {
+            "type": 2,
+            "value": "*.google.cl"
+          },
+          {
+            "type": 2,
+            "value": "*.google.co.in"
+          },
+          {
+            "type": 2,
+            "value": "*.google.co.jp"
+          },
+          {
+            "type": 2,
+            "value": "*.google.co.uk"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.ar"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.au"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.br"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.co"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.mx"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.tr"
+          },
+          {
+            "type": 2,
+            "value": "*.google.com.vn"
+          },
+          {
+            "type": 2,
+            "value": "*.google.de"
+          },
+          {
+            "type": 2,
+            "value": "*.google.es"
+          },
+          {
+            "type": 2,
+            "value": "*.google.fr"
+          },
+          {
+            "type": 2,
+            "value": "*.google.hu"
+          },
+          {
+            "type": 2,
+            "value": "*.google.it"
+          },
+          {
+            "type": 2,
+            "value": "*.google.nl"
+          },
+          {
+            "type": 2,
+            "value": "*.google.pl"
+          },
+          {
+            "type": 2,
+            "value": "*.google.pt"
+          },
+          {
+            "type": 2,
+            "value": "*.googleadapis.com"
+          },
+          {
+            "type": 2,
+            "value": "*.googleapis.cn"
+          },
+          {
+            "type": 2,
+            "value": "*.googlecommerce.com"
+          },
+          {
+            "type": 2,
+            "value": "*.googlevideo.com"
+          },
+          {
+            "type": 2,
+            "value": "*.gstatic.cn"
+          },
+          {
+            "type": 2,
+            "value": "*.gstatic.com"
+          },
+          {
+            "type": 2,
+            "value": "*.gvt1.com"
+          },
+          {
+            "type": 2,
+            "value": "*.gvt2.com"
+          },
+          {
+            "type": 2,
+            "value": "*.metric.gstatic.com"
+          },
+          {
+            "type": 2,
+            "value": "*.urchin.com"
+          },
+          {
+            "type": 2,
+            "value": "*.url.google.com"
+          },
+          {
+            "type": 2,
+            "value": "*.youtube-nocookie.com"
+          },
+          {
+            "type": 2,
+            "value": "*.youtube.com"
+          },
+          {
+            "type": 2,
+            "value": "*.youtubeeducation.com"
+          },
+          {
+            "type": 2,
+            "value": "*.ytimg.com"
+          },
+          {
+            "type": 2,
+            "value": "android.clients.google.com"
+          },
+          {
+            "type": 2,
+            "value": "android.com"
+          },
+          {
+            "type": 2,
+            "value": "developer.android.google.cn"
+          },
+          {
+            "type": 2,
+            "value": "g.co"
+          },
+          {
+            "type": 2,
+            "value": "goo.gl"
+          },
+          {
+            "type": 2,
+            "value": "google-analytics.com"
+          },
+          {
+            "type": 2,
+            "value": "google.com"
+          },
+          {
+            "type": 2,
+            "value": "googlecommerce.com"
+          },
+          {
+            "type": 2,
+            "value": "source.android.google.cn"
+          },
+          {
+            "type": 2,
+            "value": "urchin.com"
+          },
+          {
+            "type": 2,
+            "value": "www.goo.gl"
+          },
+          {
+            "type": 2,
+            "value": "youtu.be"
+          },
+          {
+            "type": 2,
+            "value": "youtube.com"
+          },
+          {
+            "type": 2,
+            "value": "youtubeeducation.com"
+          }
+        ],
+        "issureDN": "CN=Google Internet Authority G2, O=Google Inc, C=US",
+        "serialNumber": "8750337805707574866"
+      },
+      {
+        "certType": "X.509",
+        "pubKey": "30820122300D06092A864886F70D01010105000382010F003082010A02820101009C2A04775CD850913A06A382E0D85048BC893FF119701A88467EE08FC5F189CE21EE5AFE610DB7324489A0740B534F55A4CE826295EEEB595FC6E1058012C45E943FBC5B4838F453F724E6FB91E915C4CFF4530DF44AFC9F54DE7DBEA06B6F87C0D0501F28300340DA0873516C7FFF3A3CA737068EBD4B1104EB7D24DEE6F9FC3171FB94D560F32E4AAF42D2CBEAC46A1AB2CC53DD154B8B1FC819611FCD9DA83E632B8435696584C819C54622F85395BEE3804A10C62AECBA972011C739991004A0F0617A95258C4E5275E2B6ED08CA14FCCE226AB34ECF46039797037EC0B1DE7BAF4533CFBA3E71B7DEF42525C20D35899D9DFB0E1179891E37C5AF8E72690203010001",
+        "start": 1427846400000,
+        "end": 1514764799000,
+        "dn": "CN=Google Internet Authority G2, O=Google Inc, C=US",
+        "sans": [],
+        "issureDN": "CN=GeoTrust Global CA, O=GeoTrust Inc., C=US",
+        "serialNumber": "146066"
+      },
+      {
+        "certType": "X.509",
+        "pubKey": "30820122300D06092A864886F70D01010105000382010F003082010A0282010100DACC186330FDF417231A567E5BDF3C6C38E471B77891D4BCA1D84CF8A843B603E94D21070888DA582F663929BD05788B9D38E805B76A7E71A4E6C460A6B0EF80E489280F9E25D6ED83F3ADA691C798C9421835149DAD9846922E4FCAF18743C11695572D50EF892D807A57ADF2EE5F6BD2008DB914F8141535D9C046A37B72C891BFC9552BCDD0973E9C2664CCDFCE831971CA4EE6D4D57BA919CD55DEC8ECD25E3853E55C4F8C2DFE502336FC66E6CB8EA4391900B7950239910B0EFE382ED11D059AF64D3E6F0F071DAF2C1E8F6039E2FA36531339D45E262BDB3DA814BD32EB180328520471E5AB333DE138BB073684629C79EA1630F45FC02BE8716BE4F90203010001",
+        "start": 1021953600000,
+        "end": 1534824000000,
+        "dn": "CN=GeoTrust Global CA, O=GeoTrust Inc., C=US",
+        "sans": [],
+        "issureDN": "OU=Equifax Secure Certificate Authority, O=Equifax, C=US",
+        "serialNumber": "1227750"
+      }
+    ],
+    "name": "sea15s07-in-f78.1e100.net",
+    "selfSigned": false,
+    "headers": [
+      {
+        "header": "X-Frame-Options",
+        "values": [
+          "SAMEORIGIN"
+        ]
+      },
+      {
+        "header": "status",
+        "values": [
+          "HTTP/1.1 301 Moved Permanently"
+        ]
+      },
+      {
+        "header": "Alt-Svc",
+        "values": [
+          "quic=\":443\"; ma=2592000; v=\"37,36,35\""
+        ]
+      },
+      {
+        "header": "Server",
+        "values": [
+          "gws"
+        ]
+      },
+      {
+        "header": "Cache-Control",
+        "values": [
+          "public, max-age=2592000"
+        ]
+      },
+      {
+        "header": "Expires",
+        "values": [
+          "Mon, 08 May 2017 21:05:01 GMT"
+        ]
+      },
+      {
+        "header": "X-XSS-Protection",
+        "values": [
+          "1; mode=block"
+        ]
+      },
+      {
+        "header": "Content-Length",
+        "values": [
+          "219"
+        ]
+      },
+      {
+        "header": "Date",
+        "values": [
+          "Sat, 08 Apr 2017 21:05:01 GMT"
+        ]
+      },
+      {
+        "header": "Content-Type",
+        "values": [
+          "text/html; charset=UTF-8"
+        ]
+      },
+      {
+        "header": "Location",
+        "values": [
+          "http://www.google.com/"
+        ]
+      }
+    ],
+    "certStart": 1490797454000,
+    "certEnd": 1498051860000
+  }
+]

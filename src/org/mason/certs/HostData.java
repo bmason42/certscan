@@ -2,12 +2,14 @@ package org.mason.certs;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
+import javax.xml.bind.annotation.XmlTransient;
+import java.beans.Transient;
 import java.util.*;
 
 /**
  * Created by masonb on 2/14/2017.
  */
-@DynamoDBTable(tableName="HostData")
+@DynamoDBTable(tableName="host_data")
 public class HostData {
     public boolean ssl=false;
 
@@ -27,6 +29,8 @@ public class HostData {
     public long getCertStart() {
         return certStart;
     }
+
+    @DynamoDBAttribute(attributeName = "certStartAsDate")
     public Date getCertStartAsDate(){
         return new Date(certStart);
     }
@@ -39,6 +43,8 @@ public class HostData {
     public long getCertEnd() {
         return certEnd;
     }
+
+    @DynamoDBAttribute(attributeName = "certEndAsDate")
     public Date getCertEndAsDate(){
         return new Date(certEnd);
     }
@@ -83,7 +89,7 @@ public class HostData {
         this.cipherSuite = cipherSuite == null ? "none" : cipherSuite;
     }
 
-    @DynamoDBAttribute(attributeName = "certs")
+    @DynamoDBIgnore
     public List<CertData> getCertData() {
         return certData;
     }

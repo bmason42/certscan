@@ -1,6 +1,7 @@
 package org.mason.certs;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,8 +25,10 @@ public class MainAppTest {
         boolean b=addr.isAnyLocalAddress();
         b=addr.isLinkLocalAddress();
         HostData hostData = x.probeIp(addr,443,true);
-
         Assert.assertNotNull(hostData);
+        ObjectMapper mapper=new ObjectMapper();
+        String json = mapper.writeValueAsString(hostData);
+        System.out.println(json);
     }
 
 
